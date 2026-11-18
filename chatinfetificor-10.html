@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#07111f" />
+<title>ChatInfetificor — Identificador de animais</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1b2d;--panel2:#10233a;--line:#203650;--text:#edf5ff;--muted:#9bb0c8;--blue:#4da3ff;--cyan:#54e1d0;--amber:#ffc56b;--red:#ff8585;--green:#7be0a2}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#173d63 0,#0a192b 40%,var(--bg) 75%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;min-height:100vh}
+.wrap{width:min(1100px,100% - 30px);margin:auto;padding:28px 0 48px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:38px}.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.5px;font-size:19px}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#287ed0,#42d8c8);box-shadow:0 8px 24px #1a8bc44a;font-size:22px}.status{color:var(--green);font-size:12px;border:1px solid #285c4a;background:#102b27;padding:7px 11px;border-radius:999px}
+.hero{text-align:center;max-width:760px;margin:0 auto 28px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.hero h1{font-size:clamp(34px,7vw,58px);line-height:1.04;letter-spacing:-2px;margin:13px 0}.hero h1 span{background:linear-gradient(90deg,#fff,#68d9ed 60%,#83aaff);color:transparent;background-clip:text}.hero p{color:var(--muted);font-size:15px;line-height:1.6;margin:0 auto;max-width:620px}
+.searchbox{max-width:780px;margin:26px auto 16px;padding:8px;display:flex;gap:8px;border:1px solid #315273;background:#0c1c30;border-radius:18px;box-shadow:0 18px 55px #0005}.searchbox input{min-width:0;flex:1;background:transparent;border:0;outline:0;color:var(--text);font-size:16px;padding:12px 14px}.searchbox input::placeholder{color:#718ba6}.searchbox button{border:0;border-radius:12px;background:linear-gradient(135deg,#328ee7,#35c9c3);color:#061525;font-weight:800;padding:0 21px;cursor:pointer}.searchbox button:hover{filter:brightness(1.1)}
+.suggestions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 auto 30px}.chip{background:#10243a;border:1px solid #25415e;color:#b9cce0;border-radius:999px;padding:7px 12px;font-size:12px;cursor:pointer}.chip:hover,.chip.active{border-color:#4da3ff;color:#fff;background:#173655}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 14px}.toolbar h2{font-size:17px;margin:0}.count{font-size:12px;color:var(--muted)}.filters{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 12px;scrollbar-width:thin}.filter{white-space:nowrap;border:1px solid var(--line);background:#0c1b2b;color:#b7c9dc;padding:8px 12px;border-radius:999px;font-size:12px;cursor:pointer}.filter.active{background:#173e61;color:#fff;border-color:#438fd0}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.card{background:linear-gradient(155deg,#10243a,#0b1828);border:1px solid #203a55;border-radius:17px;padding:16px;min-height:158px;transition:.18s;cursor:pointer}.card:hover{transform:translateY(-2px);border-color:#438fd0;box-shadow:0 12px 28px #0003}.cardtop{display:flex;justify-content:space-between;gap:8px;align-items:center}.emoji{font-size:27px}.tag{font-size:10px;color:#a9d5ff;background:#173653;border:1px solid #285579;border-radius:999px;padding:5px 8px}.card h3{font-size:16px;margin:10px 0 3px}.sci{font-size:11px;color:#8da6c0;font-style:italic}.desc{font-size:12px;color:#b4c4d5;line-height:1.5;margin:9px 0 0}.empty{display:none;text-align:center;padding:42px 20px;border:1px dashed #35506c;border-radius:17px;color:var(--muted)}
+.notice{margin:24px 0 0;padding:14px 16px;border:1px solid #735a2d;background:#2a2418;border-radius:14px;color:#f2d8a6;font-size:12px;line-height:1.6}.footer{text-align:center;color:#7189a4;font-size:11px;margin-top:26px}
+.modal{position:fixed;inset:0;background:#020914c9;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}.modal.show{display:flex}.dialog{width:min(520px,100%);background:#102238;border:1px solid #35516e;border-radius:20px;padding:22px;box-shadow:0 24px 80px #0009}.dialogHead{display:flex;justify-content:space-between;align-items:center}.dialog h2{margin:10px 0 3px}.close{border:1px solid #38516c;background:#172e47;color:white;border-radius:10px;padding:7px 10px;cursor:pointer}.dialog .detail{color:#b8cadd;font-size:14px;line-height:1.65}.caution{padding:11px 13px;border-radius:12px;background:#30271a;border:1px solid #6c562e;color:#f3d69b;font-size:12px;line-height:1.5;margin-top:14px}
+
+.tabs{display:flex;justify-content:center;gap:9px;margin:24px auto 20px;flex-wrap:wrap}
+.tab-btn{border:1px solid #2a4967;background:#0c1b2b;color:#b9cce0;border-radius:13px;padding:11px 17px;font-weight:750;cursor:pointer}
+.tab-btn.active{background:linear-gradient(135deg,#1b5787,#176f70);border-color:#4da3ff;color:#fff;box-shadow:0 8px 24px #0003}
+[hidden]{display:none!important}
+.photo-panel{max-width:100%;margin:0 auto 22px;padding:20px;border:1px solid #294865;background:linear-gradient(155deg,#10243a,#0b1828);border-radius:19px}.photo-layout{display:grid;grid-template-columns:minmax(230px,.8fr) minmax(0,1.2fr);gap:18px;align-items:start}.photo-left{grid-column:1;grid-row:1}.photo-right{grid-column:2;grid-row:1}.photo-left .photo-actions{display:grid;grid-template-columns:1fr}.photo-right .photo-preview{width:100%;max-height:440px}.animal-photo{width:100%;height:135px;object-fit:cover;border-radius:11px;border:1px solid #2b4965;background:#081525;display:block;margin:0 0 10px}.card .emoji{display:none}.card{overflow:hidden}.card h3{margin-top:5px}
+.photo-panel h2{margin:0 0 7px;font-size:21px}.photo-panel p{color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 17px}
+.photo-actions{display:flex;gap:10px;flex-wrap:wrap}
+.photo-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #386080;background:#142d47;color:#edf5ff;border-radius:12px;padding:12px 15px;font-size:13px;font-weight:750;cursor:pointer}
+.photo-btn.primary{border:0;background:linear-gradient(135deg,#328ee7,#35c9c3);color:#061525}
+.photo-btn:disabled{opacity:.45;cursor:not-allowed}
+.photo-preview{display:block;max-width:100%;max-height:360px;object-fit:contain;margin:17px auto 0;border-radius:15px;border:1px solid #35516e;background:#06111f}
+.photo-placeholder{margin-top:15px;padding:28px 15px;text-align:center;border:1px dashed #35506c;border-radius:15px;color:#8da6c0;font-size:13px}
+.photo-status{margin-top:13px;color:#b9cce0;font-size:13px;line-height:1.5;min-height:20px}
+.photo-results{margin-top:16px;display:grid;gap:11px}
+.prediction{border:1px solid #315473;background:#0b1b2c;border-radius:14px;padding:14px}
+.prediction h3{font-size:16px;margin:0 0 6px}.prediction p{margin:4px 0;color:#b9cce0}
+.prediction .confidence{color:var(--cyan);font-weight:800;font-size:12px}
+.photo-suggestions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.photo-suggestion{border:1px solid #2a4967;background:#132b43;color:#eaf4ff;border-radius:10px;padding:8px 10px;font-size:12px;cursor:pointer}
+.photo-note{margin-top:15px;padding:12px;border:1px solid #66542f;background:#292317;color:#f1d6a0;border-radius:12px;font-size:12px;line-height:1.55}
+@media(max-width:650px){.photo-layout{grid-template-columns:1fr}.photo-left,.photo-right{grid-column:1;grid-row:auto}}
+@media(max-width:470px){.photo-panel{padding:15px}.photo-actions{display:grid}.photo-btn{width:100%}.tab-btn{flex:1;padding:11px 10px;font-size:12px}}
+
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.top{margin-bottom:30px}.status{font-size:10px}.card{padding:13px}}
+@media(max-width:470px){.wrap{width:min(100% - 22px,1100px);padding-top:18px}.grid{grid-template-columns:1fr}.hero h1{letter-spacing:-1.4px}.searchbox{border-radius:15px}.searchbox input{font-size:14px;padding:10px}.searchbox button{padding:0 14px;font-size:12px}.toolbar{align-items:flex-end}}
+.gallery-hint{display:block;color:var(--muted,#9aa);font-size:12px;line-height:1.45;margin:2px 0 8px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><div class="brand"><div class="logo">🧬</div><span>ChatInfetificor</span></div><div class="status">● Catálogo disponível</div></header>
+  <main>
+    <section class="hero">
+      <div class="eyebrow">Explore o reino animal</div>
+      <h1>Que animal você está <span>procurando?</span></h1>
+      <p>Pesquise pelo nome popular ou científico e encontre informações de insetos, abelhas, vespas, aranhas, cobras e muitos outros animais.</p>
+    </section>
+    <nav class="tabs" aria-label="Ferramentas do ChatInfetificor">
+      <button class="tab-btn active" id="catalogTab" type="button" aria-selected="true">🔎 Pesquisar animais</button>
+      <button class="tab-btn" id="photoTab" type="button" aria-selected="false">📷 Identificar por foto</button>
+    </nav>
+    <div id="catalogView">
+    <form class="searchbox" id="searchForm"><input id="search" type="search" placeholder="Ex.: abelha, jararaca, aranha ou Panthera leo..." autocomplete="off" aria-label="Pesquisar animal"><button type="submit">Pesquisar</button></form>
+    <div class="suggestions"><button class="chip" data-query="abelha">🐝 Abelhas</button><button class="chip" data-query="vespa">🪰 Vespas</button><button class="chip" data-query="cobra">🐍 Cobras</button><button class="chip" data-query="aranha">🕷️ Aranhas</button><button class="chip" data-query="borboleta">🦋 Borboletas</button></div>
+    <section>
+      <div class="toolbar"><h2 id="sectionTitle">Explore os animais</h2><span class="count" id="count">Carregando catálogo...</span></div>
+      <div class="filters" id="filters"></div>
+      <div class="grid" id="grid"></div>
+      <div class="empty" id="empty">Nenhum animal encontrado. Tente outro nome ou pesquise por um grupo, como “insetos” ou “répteis”.</div>
+    </section>
+    </div>
+    <section id="photoView" hidden>
+      <div class="photo-panel">
+        <h2>📷 Identificar animal por foto</h2>
+        <p>Tire uma foto com a câmera ou escolha uma imagem da galeria. A análise sugere possíveis grupos e fichas do catálogo.</p>
+        <div class="photo-layout">
+          <div class="photo-left">
+            <div class="photo-actions">
+              <button class="photo-btn primary" id="cameraPickBtn" type="button">📸 Tirar foto com a câmera</button>
+              <button class="photo-btn" id="galleryPickBtn" type="button">🖼️ Abrir galeria de fotos</button>
+              <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden>
+              <input id="galleryInput" type="file" accept="image/*" hidden>
+              <small class="gallery-hint">Se abrir “Choose File”, toque em <b>Fotos</b> na parte inferior para ver a galeria completa do celular.</small>
+              <button class="photo-btn primary" id="identifyPhotoBtn" type="button" disabled>✨ Analisar foto</button>
+              <button class="photo-btn" id="clearPhotoBtn" type="button" disabled>Limpar foto</button>
+            </div>
+            <div class="photo-status" id="photoStatus" role="status" aria-live="polite"></div>
+          </div>
+          <div class="photo-right">
+            <div id="photoPlaceholder" class="photo-placeholder">A foto escolhida aparecerá aqui.<br>Não se aproxime de animais desconhecidos para fotografá-los.</div>
+            <img id="photoPreview" class="photo-preview" alt="Prévia da foto selecionada" hidden>
+            <div class="photo-results" id="photoResults"></div>
+          </div>
+        </div>
+        <div class="photo-note"><strong>Importante:</strong> a análise é uma sugestão automática, não uma identificação científica. O modelo pode errar, especialmente com espécies parecidas. Não toque, capture ou se aproxime de animais desconhecidos.</div>
+      </div>
+    </section>
+    <div class="notice"><strong>⚠️ Atenção:</strong> o catálogo e a análise por foto são ferramentas educativas e não substituem a avaliação de um especialista. Não toque nem tente capturar animais desconhecidos, especialmente cobras, aranhas, abelhas e vespas. Em caso de acidente, procure atendimento de saúde.</div>
+  </main>
+  <div class="footer">ChatInfetificor • Catálogo educativo • Pesquisa funciona sem cadastro</div>
+</div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="dialog"><div class="dialogHead"><span class="tag" id="modalTag">Animal</span><button class="close" id="closeModal">Fechar ✕</button></div><div style="font-size:42px;margin-top:12px" id="modalEmoji">🐾</div><h2 id="modalTitle"></h2><div class="sci" id="modalSci"></div><p class="detail" id="modalDesc"></p><div class="caution" id="modalCaution"></div></div></div>
+<script>
+const animals = [
+// Insetos
+['Abelha-europeia','Insetos','Apis mellifera','Abelha social que vive em colônias e ajuda na polinização.','Pode ferroar quando se sente ameaçada.'],
+['Abelha-sem-ferrão jataí','Insetos','Tetragonisca angustula','Pequena abelha nativa, importante polinizadora.','Não costuma ferroar; evite mexer no ninho.'],
+['Mamangava','Insetos','Bombus spp.','Abelha grande e peluda, polinizadora de várias plantas.','Pode ferroar; observe sem tocar.'],
+['Abelha-arapuá','Insetos','Trigona spinipes','Abelha nativa que constrói ninhos e visita flores.','Pode defender o ninho em grupo.'],
+['Abelha-carpinteira','Insetos','Xylocopa spp.','Abelha grande que faz ninhos em madeira.','Pode ferroar; não tente pegar.'],
+['Abelha-irapuá','Insetos','Trigona spinipes','Nome regional usado para uma abelha sem ferrão funcional.','Pode morder e defender a colônia.'],
+['Vespa-do-papel','Insetos','Polistes spp.','Vespa que constrói ninhos de material parecido com papel.','Pode ferroar perto do ninho.'],
+['Marimbondo-caboclo','Insetos','Polistes canadensis','Vespa social encontrada em regiões tropicais.','Mantenha distância do ninho.'],
+['Vespa-asiática','Insetos','Vespa velutina','Vespa invasora em algumas regiões do mundo.','Não se aproxime nem tente remover ninhos.'],
+['Vespa-caçadora','Insetos','Pepsis spp.','Vespa que caça aranhas para alimentar suas larvas.','Algumas têm ferroada muito dolorosa; não toque.'],
+['Formiga-cortadeira','Insetos','Atta spp.','Corta folhas para cultivar fungos que alimentam a colônia.','Não coloque a mão em formigueiros.'],
+['Formiga-saúva','Insetos','Atta sexdens','Formiga cortadeira comum em várias áreas do Brasil.','Pode morder quando manipulada.'],
+['Formiga-lava-pés','Insetos','Solenopsis invicta','Formiga que constrói montes de terra e pode formar grandes colônias.','Ferroadas podem causar reações alérgicas.'],
+['Formiga-bala','Insetos','Paraponera clavata','Formiga grande de florestas tropicais.','Ferroada muito dolorosa; não toque.'],
+['Formiga-tecelã','Insetos','Oecophylla smaragdina','Constrói ninhos unindo folhas com seda produzida pelas larvas.','Pode morder e defender o ninho.'],
+['Borboleta-monarca','Insetos','Danaus plexippus','Borboleta conhecida por suas migrações.','Observe sem capturar.'],
+['Borboleta-azul','Insetos','Morpho spp.','Grupo de borboletas tropicais com asas azuis brilhantes.','Inofensiva; evite tocar nas asas.'],
+['Borboleta-coruja','Insetos','Caligo spp.','Borboleta grande com manchas que lembram olhos nas asas.','Inofensiva para pessoas.'],
+['Mariposa-atlas','Insetos','Attacus atlas','Uma das maiores mariposas do mundo em área de asas.','Não oferece perigo; não danifique.'],
+['Bicho-da-seda','Insetos','Bombyx mori','Lagarta domesticada usada na produção de seda.','Não costuma oferecer perigo.'],
+['Joaninha','Insetos','Coccinellidae','Besouro geralmente pequeno que se alimenta de pulgões.','Geralmente inofensiva.'],
+['Vaga-lume','Insetos','Lampyridae','Besouro que produz luz por bioluminescência.','Não toque nem ingira.'],
+['Besouro-rinoceronte','Insetos','Dynastinae','Besouro robusto; machos de várias espécies têm chifres.','Inofensivo para pessoas.'],
+['Besouro-serra-pau','Insetos','Cerambycidae','Besouro com antenas longas; larvas podem viver na madeira.','Não costuma oferecer perigo.'],
+['Louva-a-deus','Insetos','Mantodea','Inseto predador que captura outros pequenos animais.','Não é perigoso para humanos.'],
+['Gafanhoto','Insetos','Caelifera','Inseto saltador que se alimenta principalmente de plantas.','Não costuma oferecer perigo.'],
+['Grilo','Insetos','Gryllidae','Inseto conhecido pelo som produzido ao atritar as asas.','Inofensivo para pessoas.'],
+['Esperança','Insetos','Tettigoniidae','Inseto verde que se camufla entre folhas.','Inofensiva para pessoas.'],
+['Cigarra','Insetos','Cicadidae','Inseto conhecido pelo canto alto dos machos.','Não oferece perigo.'],
+['Libélula','Insetos','Anisoptera','Inseto voador que caça mosquitos e outros insetos.','Inofensiva para pessoas.'],
+['Donzelinha','Insetos','Zygoptera','Inseto parecido com libélula, geralmente mais delicado.','Inofensiva para pessoas.'],
+['Mosquito-da-dengue','Insetos','Aedes aegypti','Mosquito que pode transmitir dengue, zika e chikungunya.','Evite picadas e elimine água parada com ajuda de um adulto.'],
+['Pernilongo','Insetos','Culex quinquefasciatus','Mosquito comum em áreas urbanas.','Pode picar; evite exposição.'],
+['Mosca-doméstica','Insetos','Musca domestica','Mosca comum em ambientes habitados.','Pode carregar microrganismos; mantenha alimentos protegidos.'],
+['Mosca-varejeira','Insetos','Calliphoridae','Moscas que podem ser atraídas por matéria orgânica.','Evite contato com alimentos e feridas.'],
+['Mutuca','Insetos','Tabanidae','Mosca robusta cuja fêmea pode sugar sangue.','Pode causar picada dolorida.'],
+['Pulga','Insetos','Siphonaptera','Pequeno inseto parasita de mamíferos e aves.','Pode causar coceira e transmitir doenças.'],
+['Piolho','Insetos','Phthiraptera','Inseto parasita que vive entre pelos ou penas.','Não compartilhe objetos pessoais; procure orientação adequada.'],
+['Barata-americana','Insetos','Periplaneta americana','Barata grande encontrada em locais úmidos e próximos a alimentos.','Pode espalhar microrganismos; evite contato.'],
+['Barata-alemã','Insetos','Blattella germanica','Barata pequena que pode infestar cozinhas e outros ambientes.','Evite contato e mantenha alimentos protegidos.'],
+['Cupim','Insetos','Isoptera','Insetos sociais que consomem materiais com celulose.','Não costuma atacar pessoas.'],
+['Cupim-de-madeira-seca','Insetos','Cryptotermes brevis','Cupim que forma colônias dentro de madeira seca, como móveis e estruturas.','Não costuma atacar pessoas; danos na madeira devem ser avaliados por profissional.'],
+['Cupim-subterrâneo','Insetos','Coptotermes gestroi','Cupim que vive em colônias no solo e pode alcançar estruturas de madeira.','Não costuma atacar pessoas; não mexa em colônias.'],
+['Cupim-arborícola','Insetos','Nasutitermes spp.','Cupins que constroem ninhos aparentes em árvores e madeira.','Observe sem tocar no ninho.'],
+['Cupim-de-montículo','Insetos','Cornitermes spp.','Cupins que constroem montículos de terra em áreas abertas.','Não destrua nem manipule o ninho.'],
+['Bicho-pau','Insetos','Phasmatodea','Inseto alongado que se camufla como galho.','Inofensivo; não precisa ser manipulado.'],
+['Tesourinha','Insetos','Dermaptera','Inseto com pequenas pinças na extremidade do abdômen.','Geralmente inofensiva; não introduz no ouvido.'],
+['Traça-dos-livros','Insetos','Lepisma saccharinum','Inseto pequeno que pode aparecer em locais úmidos.','Não oferece perigo às pessoas.'],
+['Percevejo-de-cama','Insetos','Cimex lectularius','Inseto que se alimenta de sangue durante o repouso das pessoas.','Picadas podem causar coceira; procure ajuda para controle.'],
+['Barbeiro','Insetos','Triatominae','Inseto que pode transmitir o agente da doença de Chagas.','Não toque; avise um adulto e o serviço de saúde/vigilância.'],
+['Pulgão','Insetos','Aphidoidea','Pequeno inseto que se alimenta da seiva das plantas.','Não oferece perigo às pessoas.'],
+['Cochonilha','Insetos','Coccoidea','Inseto pequeno que vive em plantas e se alimenta de seiva.','Não oferece perigo às pessoas.'],
+['Bicho-de-pé','Insetos','Tunga penetrans','Pulga muito pequena cujas fêmeas podem penetrar na pele.','Procure atendimento de saúde; não tente retirar profundamente.'],
+['Mariposa','Insetos','Lepidoptera','Nome comum de diversos insetos próximos das borboletas.','A maioria é inofensiva; evite tocar em lagartas peludas.'],
+// Aracnídeos
+['Aranha-armadeira','Aracnídeos','Phoneutria spp.','Aranha errante encontrada em partes da América do Sul.','Pode causar acidente grave. Não toque e mantenha distância.'],
+['Aranha-marrom','Aracnídeos','Loxosceles spp.','Aranha discreta que pode se esconder em roupas e locais pouco mexidos.','Pode causar acidente médico. Não manipule.'],
+['Viúva-negra','Aracnídeos','Latrodectus spp.','Aranha conhecida pelo corpo escuro e marca colorida em algumas espécies.','Veneno pode causar sintomas importantes. Não toque.'],
+['Aranha-de-jardim','Aracnídeos','Argiope spp.','Aranha que constrói teias em jardins e vegetação.','Observe sem encostar.'],
+['Caranguejeira','Aracnídeos','Theraphosidae','Aranha grande e peluda, também chamada de tarântula.','Pelos podem irritar a pele e os olhos; não toque.'],
+['Aranha-saltadora','Aracnídeos','Salticidae','Aranha pequena com ótima visão e saltos curtos.','Geralmente não oferece perigo; não manipule.'],
+['Aranha-lobo','Aracnídeos','Lycosidae','Aranha caçadora que costuma caminhar pelo solo.','Evite contato; identificação visual pode confundir espécies.'],
+['Aranha-de-teia-dourada','Aracnídeos','Trichonephila clavipes','Constrói grandes teias com fios de tom dourado.','Não mexa na teia.'],
+['Aranha-de-prata','Aracnídeos','Argiope argentata','Aranha de jardim com marcas prateadas no corpo.','Observe sem tocar.'],
+['Ácaro','Aracnídeos','Acari','Grupo diverso de aracnídeos, muitos microscópicos.','Alguns podem causar alergias ou irritações.'],
+['Carrapato-estrela','Aracnídeos','Amblyomma sculptum','Carrapato que pode transmitir febre maculosa.','Não toque com as mãos; procure orientação de saúde.'],
+['Carrapato-do-cão','Aracnídeos','Rhipicephalus sanguineus','Carrapato associado a cães e ambientes frequentados por eles.','Pode transmitir doenças; peça ajuda para remoção segura.'],
+['Escorpião-amarelo','Aracnídeos','Tityus serrulatus','Escorpião de importância médica no Brasil.','Acidente pode ser grave. Afaste-se e avise um adulto.'],
+['Escorpião-marrom','Aracnídeos','Tityus bahiensis','Escorpião encontrado em partes do Brasil.','Não toque; procure atendimento após uma picada.'],
+['Escorpião-do-nordeste','Aracnídeos','Tityus stigmurus','Espécie encontrada principalmente no Nordeste brasileiro.','Não toque; mantenha distância.'],
+['Opilião','Aracnídeos','Opiliones','Aracnídeo de pernas longas que não é uma aranha verdadeira.','Não oferece risco significativo às pessoas.'],
+['Pseudoescorpião','Aracnídeos','Pseudoscorpiones','Aracnídeo minúsculo com pinças, sem cauda de escorpião.','Inofensivo para pessoas.'],
+['Solífugo','Aracnídeos','Solifugae','Aracnídeo caçador de regiões quentes e secas.','Não é venenoso, mas pode morder se ameaçado.'],
+// Répteis: cobras e outros
+['Jararaca','Répteis','Bothrops jararaca','Serpente peçonhenta encontrada em áreas do Brasil.','Risco de acidente grave. Nunca tente capturar ou matar.'],
+['Jararacuçu','Répteis','Bothrops jararacussu','Uma das maiores espécies do grupo das jararacas.','Peçonhenta. Afaste-se e chame ajuda especializada.'],
+['Cascavel','Répteis','Crotalus durissus','Serpente peçonhenta reconhecida pelo guizo na cauda.','Mantenha distância; não tente tocar.'],
+['Surucucu','Répteis','Lachesis muta','Grande serpente peçonhenta de florestas tropicais.','Mantenha distância e não tente identificar de perto.'],
+['Coral-verdadeira','Répteis','Micrurus spp.','Grupo de serpentes muito peçonhentas, com padrões coloridos.','Não toque. Não confie apenas nas cores para identificar.'],
+['Sucuri','Répteis','Eunectes murinus','Grande serpente constritora associada a rios e áreas alagadas.','Animal silvestre; observe de longe.'],
+['Jiboia','Répteis','Boa constrictor','Serpente não peçonhenta que captura presas por constrição.','Pode morder se ameaçada; não manipule.'],
+['Caninana','Répteis','Spilotes pullatus','Serpente ágil, geralmente não peçonhenta, que vive em árvores e no solo.','Pode se defender se acuada; mantenha distância.'],
+['Cobra-cipó','Répteis','Chironius spp.','Serpente esguia que costuma viver na vegetação.','Não tente pegar; identificação exige especialista.'],
+['Cobra-d’água','Répteis','Erythrolamprus miliaris','Serpente frequentemente encontrada perto de ambientes aquáticos.','Não manipule serpentes desconhecidas.'],
+['Cobra-cega','Répteis','Amphisbaenia','Réptil subterrâneo de corpo alongado, não é uma cobra verdadeira.','Geralmente inofensivo; deixe no ambiente.'],
+['Cobra-do-milho','Répteis','Pantherophis guttatus','Serpente não peçonhenta comum em criação responsável.','Animal silvestre ou de estimação; não solte na natureza.'],
+['Píton-real','Répteis','Python regius','Serpente constritora originária da África.','Não é peçonhenta; animais grandes devem ser manejados por especialistas.'],
+['Píton-reticulada','Répteis','Malayopython reticulatus','Uma das maiores serpentes do mundo.','Pode ser perigosa pelo tamanho; não se aproxime.'],
+['Cobra-rei','Répteis','Ophiophagus hannah','Grande serpente asiática peçonhenta que se alimenta de outras cobras.','Muito perigosa; mantenha grande distância.'],
+['Naja','Répteis','Naja spp.','Grupo de serpentes peçonhentas que pode expandir o pescoço.','Não se aproxime nem tente identificar de perto.'],
+['Mamba-negra','Répteis','Dendroaspis polylepis','Serpente africana muito peçonhenta.','Altamente perigosa; mantenha distância.'],
+['Lagartixa-doméstica','Répteis','Hemidactylus mabouia','Pequeno lagarto que costuma viver em paredes e casas.','Inofensiva; ajuda a consumir insetos.'],
+['Calango','Répteis','Tropidurus spp.','Lagarto comum em pedras, muros e áreas ensolaradas.','Geralmente inofensivo; não capture.'],
+['Iguana-verde','Répteis','Iguana iguana','Lagarto herbívoro que vive em árvores e áreas tropicais.','Pode arranhar ou morder se acuado.'],
+['Teiú','Répteis','Salvator merianae','Lagarto grande encontrado em várias regiões do Brasil.','Pode morder e usar a cauda para se defender; não toque.'],
+['Camaleão','Répteis','Chamaeleonidae','Grupo de lagartos conhecidos por olhos móveis e mudanças de cor.','Observe sem capturar.'],
+['Dragão-de-komodo','Répteis','Varanus komodoensis','Grande lagarto carnívoro encontrado em ilhas da Indonésia.','Animal selvagem perigoso; mantenha distância.'],
+['Jabuti-piranga','Répteis','Chelonoidis carbonarius','Quelônio terrestre encontrado em áreas da América do Sul.','Não retire da natureza.'],
+['Tartaruga-verde','Répteis','Chelonia mydas','Tartaruga marinha que se alimenta principalmente de algas e plantas marinhas.','Espécie protegida; não toque nem perturbe.'],
+['Cágado-de-barbicha','Répteis','Phrynops geoffroanus','Quelônio de água doce encontrado em rios e lagoas.','Não retire do ambiente.'],
+['Jacaré-açu','Répteis','Melanosuchus niger','Grande jacaré da região amazônica.','Animal selvagem perigoso; mantenha distância.'],
+['Jacaré-do-papo-amarelo','Répteis','Caiman latirostris','Jacaré encontrado em áreas úmidas da América do Sul.','Não se aproxime nem alimente.'],
+// Mamíferos
+['Onça-pintada','Mamíferos','Panthera onca','Maior felino das Américas, com pelagem geralmente pintada.','Animal selvagem; nunca se aproxime.'],
+['Onça-parda','Mamíferos','Puma concolor','Felino de grande porte encontrado em muitos ambientes das Américas.','Mantenha distância de animais silvestres.'],
+['Gato-doméstico','Mamíferos','Felis catus','Felino domesticado com grande variedade de cores e padrões.','Respeite o espaço do animal.'],
+['Cachorro-doméstico','Mamíferos','Canis lupus familiaris','Mamífero domesticado em muitas raças e tamanhos.','Não se aproxime de cão desconhecido sem o responsável.'],
+['Lobo-guará','Mamíferos','Chrysocyon brachyurus','Canídeo de pernas longas típico do Cerrado.','Silvestre; não alimente nem tente tocar.'],
+['Lobo-cinzento','Mamíferos','Canis lupus','Canídeo social que vive em grupos em várias regiões do Hemisfério Norte.','Animal selvagem; mantenha distância.'],
+['Raposa-vermelha','Mamíferos','Vulpes vulpes','Canídeo de porte médio com cauda volumosa.','Não tente alimentar ou tocar.'],
+['Quati','Mamíferos','Nasua nasua','Mamífero de focinho comprido que vive em grupos.','Pode morder; não alimente nem toque.'],
+['Guaxinim','Mamíferos','Procyon lotor','Mamífero reconhecido pela máscara escura ao redor dos olhos.','Não manipule animais silvestres.'],
+['Capivara','Mamíferos','Hydrochoerus hydrochaeris','Maior roedor atual, comum perto de rios e lagoas.','Observe de longe; não toque em filhotes.'],
+['Paca','Mamíferos','Cuniculus paca','Roedor noturno com manchas claras nas laterais do corpo.','Animal silvestre; não capture.'],
+['Cutia','Mamíferos','Dasyprocta spp.','Roedor de pernas longas que dispersa sementes.','Não alimente animais silvestres.'],
+['Esquilo','Mamíferos','Sciuridae','Grupo de roedores ágeis que pode viver em árvores.','Não tente capturar.'],
+['Macaco-prego','Mamíferos','Sapajus spp.','Primata inteligente que vive em grupos.','Não alimente nem se aproxime; pode morder.'],
+['Sagui','Mamíferos','Callithrix spp.','Pequeno primata com unhas adaptadas para subir em árvores.','Não ofereça alimentos nem tente tocar.'],
+['Mico-leão-dourado','Mamíferos','Leontopithecus rosalia','Primata brasileiro ameaçado, conhecido pela juba dourada.','Espécie protegida; observe sem perturbar.'],
+['Boto-cor-de-rosa','Mamíferos','Inia geoffrensis','Golfinho de água doce da bacia amazônica.','Não persiga nem toque.'],
+['Tucuxi','Mamíferos','Sotalia fluviatilis','Golfinho de água doce encontrado na Amazônia.','Observe sem perturbar.'],
+['Baleia-azul','Mamíferos','Balaenoptera musculus','Maior animal conhecido do planeta.','Observe apenas de forma responsável.'],
+['Golfinho-nariz-de-garrafa','Mamíferos','Tursiops truncatus','Golfinho marinho conhecido por seu focinho curto.','Não nade em direção nem alimente.'],
+['Morcego-vampiro-comum','Mamíferos','Desmodus rotundus','Morcego que se alimenta de sangue de outros animais.','Não toque em morcegos; avise a vigilância se encontrar um caído.'],
+['Morcego-frugívoro','Mamíferos','Artibeus spp.','Morcego que se alimenta de frutos e ajuda a dispersar sementes.','Não toque em morcegos.'],
+['Tamanduá-bandeira','Mamíferos','Myrmecophaga tridactyla','Mamífero de focinho longo que come formigas e cupins.','Pode se defender com as garras; mantenha distância.'],
+['Tatu-galinha','Mamíferos','Dasypus novemcinctus','Tatu com carapaça formada por placas.','Não capture nem consuma animais silvestres.'],
+['Preguiça-comum','Mamíferos','Bradypus variegatus','Mamífero arborícola de movimentos lentos.','Não retire da árvore nem tente pegar.'],
+['Anta','Mamíferos','Tapirus terrestris','Maior mamífero terrestre nativo da América do Sul.','Silvestre; observe de longe.'],
+['Veado-catingueiro','Mamíferos','Subulo gouazoubira','Veado pequeno encontrado em diferentes ambientes brasileiros.','Não persiga nem alimente.'],
+['Cavalo','Mamíferos','Equus caballus','Mamífero herbívoro domesticado usado em diferentes atividades.','Aproxime-se apenas com autorização do responsável.'],
+['Vaca','Mamíferos','Bos taurus','Bovino domesticado criado para produção de alimentos e outros usos.','Pode dar coices; mantenha distância adequada.'],
+['Porco','Mamíferos','Sus scrofa domesticus','Mamífero domesticado criado em diferentes sistemas.','Respeite o espaço do animal.'],
+['Ovelha','Mamíferos','Ovis aries','Mamífero domesticado criado principalmente por lã e outros produtos.','Geralmente dócil, mas não force contato.'],
+['Coelho','Mamíferos','Oryctolagus cuniculus','Pequeno mamífero herbívoro com orelhas longas.','Segure apenas com orientação de um adulto.'],
+['Rato-preto','Mamíferos','Rattus rattus','Roedor que pode viver perto de habitações humanas.','Não toque; pode transmitir doenças.'],
+['Rato-marrom','Mamíferos','Rattus norvegicus','Roedor adaptável encontrado em ambientes urbanos e rurais.','Não toque; procure controle especializado.'],
+['Ouriço-cacheiro','Mamíferos','Coendou spp.','Roedor arborícola com espinhos que servem de defesa.','Não tente tocar; os espinhos podem ferir.'],
+// Aves
+['Arara-azul','Aves','Anodorhynchus hyacinthinus','Grande arara de plumagem azul, nativa do Brasil.','Ave silvestre protegida; não capture.'],
+['Arara-vermelha','Aves','Ara chloropterus','Arara de plumagem vermelha, verde e azul.','Observe sem perturbar.'],
+['Papagaio-verdadeiro','Aves','Amazona aestiva','Papagaio verde conhecido por imitar sons.','Não retire da natureza.'],
+['Periquito-rico','Aves','Brotogeris tirica','Pequeno psitacídeo verde encontrado no Brasil.','Ave silvestre; não capture.'],
+['Bem-te-vi','Aves','Pitangus sulphuratus','Ave comum, reconhecida pelo canto e faixa amarela no ventre.','Inofensiva; observe sem perturbar.'],
+['Sabiá-laranjeira','Aves','Turdus rufiventris','Ave conhecida pelo canto e peito alaranjado.','Não retire ninhos.'],
+['João-de-barro','Aves','Furnarius rufus','Ave que constrói ninho de barro em formato de forno.','Não danifique o ninho.'],
+['Tucano-toco','Aves','Ramphastos toco','Ave de bico grande e colorido.','Ave silvestre; não capture.'],
+['Beija-flor-rubi','Aves','Heliodoxa rubricauda','Beija-flor com brilho colorido na garganta.','Não toque nem tente capturar.'],
+['Urubu-de-cabeça-preta','Aves','Coragyps atratus','Ave necrófaga importante para a limpeza do ambiente.','Não toque em animais mortos.'],
+['Carcará','Aves','Caracara plancus','Ave de rapina adaptável, comum em áreas abertas.','Observe de longe.'],
+['Gavião-carijó','Aves','Rupornis magnirostris','Pequena ave de rapina comum em áreas abertas e urbanas.','Não tente capturar.'],
+['Coruja-buraqueira','Aves','Athene cunicularia','Coruja que pode viver em tocas no solo.','Não se aproxime de ninhos.'],
+['Coruja-das-torres','Aves','Tyto furcata','Coruja de rosto claro em formato de coração.','Observe sem perturbar.'],
+['Pinguim-de-magalhães','Aves','Spheniscus magellanicus','Ave marinha que não voa e nada muito bem.','Não persiga animais na praia.'],
+['Flamingo','Aves','Phoenicopterus roseus','Ave de pernas longas que pode apresentar plumagem rosada.','Não perturbe grupos em áreas alagadas.'],
+['Pavão','Aves','Pavo cristatus','Ave conhecida pela cauda ornamental do macho.','Não provoque nem persiga.'],
+['Galinha','Aves','Gallus gallus domesticus','Ave domesticada criada em diferentes partes do mundo.','Respeite os animais e seus espaços.'],
+['Pato-real','Aves','Anas platyrhynchos','Pato aquático comum em lagos e áreas úmidas.','Não ofereça pão; mantenha distância.'],
+['Ganso','Aves','Anserini','Grupo de aves aquáticas que pode defender o ninho.','Não se aproxime de filhotes ou ninhos.'],
+['Garça-branca-grande','Aves','Ardea alba','Ave de pernas longas que pesca em águas rasas.','Observe sem perturbar.'],
+['Colhereiro','Aves','Platalea ajaja','Ave rosada com bico achatado em formato de colher.','Não perturbe colônias.'],
+['Ema','Aves','Rhea americana','Grande ave sul-americana que não voa.','Pode correr rapidamente; observe de longe.'],
+['Avestruz','Aves','Struthio camelus','Maior ave atual, nativa da África.','Pode causar ferimentos; mantenha distância.'],
+['Pombo-doméstico','Aves','Columba livia domestica','Ave urbana muito adaptada a cidades.','Evite contato com fezes e ninhos.'],
+['Rouxinol','Aves','Luscinia megarhynchos','Pequena ave conhecida pelo canto melodioso.','Observe sem capturar.'],
+['Pica-pau-do-campo','Aves','Colaptes campestris','Pica-pau encontrado em áreas abertas da América do Sul.','Não danifique cavidades e ninhos.'],
+['Martim-pescador','Aves','Chloroceryle amazona','Ave que mergulha para capturar peixes.','Observe sem perturbar.'],
+['Araponga','Aves','Procnias nudicollis','Ave florestal conhecida por vocalização muito forte.','Não capture aves silvestres.'],
+['Mutum','Aves','Crax spp.','Grupo de aves florestais de grande porte.','Espécies podem estar ameaçadas; não capture.'],
+// Anfíbios
+['Sapo-cururu','Anfíbios','Rhinella marina','Sapo grande com glândulas que liberam substâncias defensivas.','Não toque nas secreções; lave as mãos após contato acidental.'],
+['Perereca-verde','Anfíbios','Boana albopunctata','Perereca arborícola encontrada em ambientes úmidos.','Não manipule anfíbios; a pele é sensível.'],
+['Rã-touro','Anfíbios','Lithobates catesbeianus','Rã grande originária da América do Norte.','Não transporte nem solte na natureza.'],
+['Rã-pimenta','Anfíbios','Leptodactylus labyrinthicus','Rã grande encontrada em várias regiões do Brasil.','Não manipule animais silvestres.'],
+['Salamandra-de-fogo','Anfíbios','Salamandra salamandra','Anfíbio europeu com manchas amarelas e pretas.','Secreções da pele podem irritar; não toque.'],
+['Axolote','Anfíbios','Ambystoma mexicanum','Salamandra aquática que mantém características larvais na fase adulta.','Não retire da natureza; espécie ameaçada.'],
+['Cecília','Anfíbios','Gymnophiona','Anfíbio sem patas que vive principalmente no solo.','Não confunda com cobra; deixe no ambiente.'],
+['Rã-dardo-venenosa','Anfíbios','Dendrobatidae','Grupo de pequenos anfíbios coloridos; algumas espécies têm toxinas na pele.','Não toque nem manipule.'],
+['Perereca-de-banheiro','Anfíbios','Scinax spp.','Nome popular usado para pequenas pererecas que aparecem perto de casas.','Não manipule; anfíbios têm pele delicada.'],
+['Sapo-cururuzinho','Anfíbios','Rhinella spp.','Nome comum para sapos de menor porte em algumas regiões.','Evite tocar nas secreções defensivas.'],
+// Aquáticos e outros
+['Tubarão-branco','Peixes','Carcharodon carcharias','Grande peixe predador dos oceanos.','Animal selvagem; mantenha distância.'],
+['Tubarão-martelo','Peixes','Sphyrna spp.','Grupo de tubarões com cabeça em formato de martelo.','Não se aproxime de animais selvagens.'],
+['Tubarão-baleia','Peixes','Rhincodon typus','Maior peixe conhecido; alimenta-se filtrando pequenos organismos.','Não toque nem monte no animal.'],
+['Arraia','Peixes','Batoidea','Grupo de peixes achatados que vivem no mar e em água doce.','Algumas têm ferrão; não pise nem toque.'],
+['Piranha-vermelha','Peixes','Pygocentrus nattereri','Peixe de água doce encontrado em rios sul-americanos.','Não coloque mãos na água perto de animais.'],
+['Pirarucu','Peixes','Arapaima gigas','Grande peixe de água doce da Amazônia.','Não tente capturar ou alimentar.'],
+['Tambaqui','Peixes','Colossoma macropomum','Peixe amazônico de grande importância ecológica e alimentar.','Observe em seu ambiente natural.'],
+['Peixe-palhaço','Peixes','Amphiprioninae','Peixe colorido que vive associado a anêmonas-do-mar.','Não retire animais de recifes.'],
+['Cavalo-marinho','Peixes','Hippocampus spp.','Peixe que nada em posição vertical; o macho carrega os filhotes.','Não toque nem retire do mar.'],
+['Peixe-leão','Peixes','Pterois volitans','Peixe marinho com nadadeiras longas e espinhos venenosos.','Não toque; espinhos podem causar acidentes.'],
+['Baiacu','Peixes','Tetraodontidae','Grupo de peixes que pode inflar o corpo quando ameaçado.','Algumas espécies são tóxicas; nunca consuma sem controle especializado.'],
+['Enguia-elétrica','Peixes','Electrophorus electricus','Peixe amazônico capaz de produzir descargas elétricas.','Mantenha distância e não toque na água ao redor.'],
+['Poraquê','Peixes','Electrophorus spp.','Nome amazônico para a enguia-elétrica.','Pode produzir descargas fortes; não toque.'],
+['Polvo-comum','Moluscos','Octopus vulgaris','Molusco marinho de oito braços e grande capacidade de camuflagem.','Observe sem tocar; algumas espécies são perigosas.'],
+['Polvo-de-anéis-azuis','Moluscos','Hapalochlaena spp.','Pequeno polvo com anéis azuis brilhantes quando ameaçado.','Muito perigoso; não toque.'],
+['Lula','Moluscos','Teuthida','Molusco marinho com tentáculos e corpo alongado.','Observe sem capturar.'],
+['Caracol-de-jardim','Moluscos','Cornu aspersum','Molusco terrestre com concha espiralada.','Não leve à boca; lave as mãos após contato.'],
+['Lesma','Moluscos','Gastropoda','Molusco sem concha externa evidente.','Evite tocar e lave as mãos após contato.'],
+['Água-viva','Cnidários','Scyphozoa','Animal marinho gelatinoso com tentáculos; algumas espécies queimam.','Não toque, mesmo se estiver na areia.'],
+['Caravela-portuguesa','Cnidários','Physalia physalis','Colônia flutuante com tentáculos que podem causar queimaduras dolorosas.','Não toque, mesmo encalhada na praia.'],
+['Estrela-do-mar','Equinodermos','Asteroidea','Animal marinho com braços geralmente organizados ao redor de um centro.','Não retire da água nem manuseie.'],
+['Ouriço-do-mar','Equinodermos','Echinoidea','Animal marinho com corpo arredondado e espinhos.','Espinhos podem ferir; não pise nem toque.'],
+['Pepino-do-mar','Equinodermos','Holothuroidea','Animal marinho de corpo alongado que vive no fundo.','Não manipule animais marinhos.'],
+['Caranguejo-uçá','Crustáceos','Ucides cordatus','Caranguejo de manguezal importante para o ecossistema.','Respeite períodos de proteção e não capture sem autorização.'],
+['Siri-azul','Crustáceos','Callinectes sapidus','Caranguejo nadador com patas traseiras achatadas.','Pinças podem machucar; não manipule.'],
+['Camarão-rosa','Crustáceos','Farfantepenaeus brasiliensis','Camarão marinho encontrado no Atlântico ocidental.','Observe sem retirar do ambiente.'],
+['Lagosta','Crustáceos','Nephropidae','Crustáceo marinho com corpo robusto e antenas longas.','Pinças podem ferir; não manipule.'],
+['Tatuzinho-de-jardim','Crustáceos','Armadillidium vulgare','Pequeno crustáceo terrestre que pode enrolar o corpo.','Inofensivo para pessoas.']
+];
+const groups=['Todos','Insetos','Aracnídeos','Répteis','Mamíferos','Aves','Anfíbios','Peixes','Moluscos','Cnidários','Equinodermos','Crustáceos'];
+const icons={'Insetos':'🐝','Aracnídeos':'🕷️','Répteis':'🐍','Mamíferos':'🐾','Aves':'🦜','Anfíbios':'🐸','Peixes':'🐟','Moluscos':'🐙','Cnidários':'🪼','Equinodermos':'⭐','Crustáceos':'🦀'};
+const search=document.getElementById('search'),grid=document.getElementById('grid'),count=document.getElementById('count'),empty=document.getElementById('empty'),filters=document.getElementById('filters'),title=document.getElementById('sectionTitle');
+let activeGroup='Todos',query='';
+const norm=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function drawFilters(){filters.innerHTML=groups.map(g=>`<button class="filter ${g===activeGroup?'active':''}" data-group="${g}">${g==='Todos'?'🌎':(icons[g]||'🐾')} ${g}</button>`).join('');}
+function getMatches(){const q=norm(query.trim());return animals.filter(a=>(activeGroup==='Todos'||a[1]===activeGroup)&&(!q||a.slice(0,4).some(v=>norm(v).includes(q))));}
+function render(){const found=getMatches();grid.innerHTML=found.map((a,i)=>`<article class="card" tabindex="0" role="button" data-index="${animals.indexOf(a)}" aria-label="Ver informações sobre ${a[0]}"><img class="animal-photo" alt="Foto de referência: ${a[0]}" loading="lazy" data-photo-name="${a[0]}"><div class="cardtop"><span class="emoji">${icons[a[1]]||'🐾'}</span><span class="tag">${a[1]}</span></div><h3>${a[0]}</h3><div class="sci">${a[2]}</div><p class="desc">${a[3]}</p></article>`).join('');loadAnimalPhotos();count.textContent=`${found.length} de ${animals.length} animais`;empty.style.display=found.length?'none':'block';grid.style.display=found.length?'grid':'none';title.textContent=query?`Resultados para “${query}”`:activeGroup==='Todos'?'Explore os animais':activeGroup;}
+function update(){drawFilters();render();}
+function showAnimal(a){document.getElementById('modalTag').textContent=a[1];document.getElementById('modalEmoji').textContent=icons[a[1]]||'🐾';document.getElementById('modalTitle').textContent=a[0];document.getElementById('modalSci').textContent=a[2];document.getElementById('modalDesc').textContent=a[3];document.getElementById('modalCaution').textContent='Atenção: '+a[4]+' Esta ficha é informativa e não confirma a identificação de um animal observado.';document.getElementById('modal').classList.add('show');}
+document.getElementById('searchForm').addEventListener('submit',e=>{e.preventDefault();query=search.value;update();});
+search.addEventListener('input',()=>{query=search.value;render();});
+filters.addEventListener('click',e=>{const b=e.target.closest('[data-group]');if(!b)return;activeGroup=b.dataset.group;update();});
+grid.addEventListener('click',e=>{const c=e.target.closest('[data-index]');if(c)showAnimal(animals[Number(c.dataset.index)]);});
+grid.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-index]')){e.preventDefault();showAnimal(animals[Number(e.target.dataset.index)]);}});
+document.querySelector('.suggestions').addEventListener('click',e=>{const b=e.target.closest('[data-query]');if(!b)return;search.value=b.dataset.query;query=b.dataset.query;activeGroup='Todos';update();});
+document.getElementById('closeModal').addEventListener('click',()=>document.getElementById('modal').classList.remove('show'));
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('show');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modal').classList.remove('show');});
+// Navegação entre catálogo e identificação por foto
+const catalogTab=document.getElementById('catalogTab');
+const photoTab=document.getElementById('photoTab');
+const catalogView=document.getElementById('catalogView');
+const photoView=document.getElementById('photoView');
+function setTab(which){
+  const showPhoto=which==='photo';
+  catalogView.hidden=showPhoto;
+  photoView.hidden=!showPhoto;
+  catalogTab.classList.toggle('active',!showPhoto);
+  photoTab.classList.toggle('active',showPhoto);
+  catalogTab.setAttribute('aria-selected',String(!showPhoto));
+  photoTab.setAttribute('aria-selected',String(showPhoto));
+}
+catalogTab.addEventListener('click',()=>setTab('catalog'));
+photoTab.addEventListener('click',()=>{
+  setTab('photo');
+  // A abertura da câmera precisa acontecer diretamente a partir do toque do usuário.
+  if(!selectedPhoto) cameraInput.click();
+});
+
+// A análise usa um classificador visual carregado no navegador (precisa de internet na primeira utilização).
+let selectedPhoto=null, selectedPhotoUrl=null, visionModel=null, modelPromise=null;
+const cameraInput=document.getElementById('cameraInput');
+const galleryInput=document.getElementById('galleryInput');
+const photoPreview=document.getElementById('photoPreview');
+const photoPlaceholder=document.getElementById('photoPlaceholder');
+const identifyPhotoBtn=document.getElementById('identifyPhotoBtn');
+const clearPhotoBtn=document.getElementById('clearPhotoBtn');
+const photoStatus=document.getElementById('photoStatus');
+const photoResults=document.getElementById('photoResults');
+function setPhotoStatus(message){photoStatus.textContent=message;}
+function loadScript(src){return new Promise((resolve,reject)=>{
+  const script=document.createElement('script');script.src=src;script.async=true;
+  script.onload=resolve;script.onerror=()=>reject(new Error('Não foi possível carregar o componente de IA. Verifique a conexão com a internet.'));
+  document.head.appendChild(script);
+});}
+async function getVisionModel(){
+  if(visionModel)return visionModel;
+  if(modelPromise)return modelPromise;
+  modelPromise=(async()=>{
+    if(!window.tf)await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
+    if(!window.mobilenet)await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1');
+    visionModel=await window.mobilenet.load({version:2,alpha:1.0});
+    return visionModel;
+  })();
+  try{return await modelPromise;}catch(err){modelPromise=null;throw err;}
+}
+function chooseGroup(label){
+  const l=norm(label);
+  const rules=[
+    [/bee|honeybee|bumblebee|wasp|hornet|ant|beetle|ladybug|ladybird|butterfly|moth|dragonfly|grasshopper|cricket|mantis|cockroach|fly|mosquito|cicada|caterpillar|weevil|damselfly|termite/,'Insetos'],
+    [/spider|tarantula|black widow|scorpion|tick|mite|harvestman/,'Aracnídeos'],
+    [/snake|serpent|viper|cobra|boa constrictor|python|adder|rattlesnake|garter snake|king snake/,'Répteis'],
+    [/lizard|iguana|gecko|chameleon|komodo|alligator|crocodile|tortoise|turtle|terrapin/,'Répteis'],
+    [/frog|toad|tree frog|salamander|newt|axolotl/,'Anfíbios'],
+    [/bird|parrot|macaw|toucan|eagle|hawk|owl|penguin|flamingo|peacock|ostrich|hen|chicken|duck|goose|pigeon|robin|sparrow|woodpecker|kingfisher/,'Aves'],
+    [/fish|shark|ray|stingray|eel|piranha|seahorse|clownfish|lionfish|puffer/,'Peixes'],
+    [/whale|dolphin|bat|dog|cat|wolf|fox|bear|tiger|lion|leopard|jaguar|elephant|horse|cow|sheep|goat|pig|rabbit|hare|mouse|rat|squirrel|monkey|marmoset|sloth|anteater|raccoon|otter|deer|camel|giraffe|zebra|kangaroo|panda|seal|walrus|hedgehog/,'Mamíferos'],
+    [/octopus|squid|snail|slug/,'Moluscos'],
+    [/jellyfish|sea anemone|coral/,'Cnidários'],
+    [/starfish|sea cucumber|sea urchin/,'Equinodermos'],
+    [/crab|lobster|shrimp|crayfish|crustacean|woodlouse/,'Crustáceos']
+  ];
+  for(const [pattern,group] of rules)if(pattern.test(l))return group;
+  return null;
+}
+function suggestedRecords(label,group){
+  const l=norm(label);
+  const exact=animals.filter(a=>norm(a[0]).includes(l)||norm(a[2]).includes(l));
+  if(exact.length)return exact.slice(0,3);
+  if(!group)return [];
+  const groupItems=animals.filter(a=>a[1]===group);
+  const keywordMap=[
+    [/bee|honeybee|bumblebee/,'abelha'],[/wasp|hornet/,'vespa'],[/ant/,'formiga'],[/spider|tarantula/,'aranha'],[/scorpion/,'escorpiao'],[/snake|serpent|viper|cobra|boa constrictor|python|adder/,'cobra'],[/frog|toad|salamander|newt/,'sapo'],[/butterfly|moth/,'borboleta'],[/shark/,'tubarao'],[/octopus/,'polvo'],[/crab/,'caranguejo'],[/lizard|iguana|gecko|chameleon/,'lagarto']
+  ];
+  const entry=keywordMap.find(([re])=>re.test(l));
+  if(entry){const hits=groupItems.filter(a=>norm(a[0]).includes(entry[1]));if(hits.length)return hits.slice(0,3);}
+  return groupItems.slice(0,3);
+}
+function renderPhotoPredictions(predictions){
+  photoResults.innerHTML='';
+  predictions.forEach((prediction,index)=>{
+    const group=chooseGroup(prediction.className);
+    const matches=suggestedRecords(prediction.className,group);
+    const card=document.createElement('div');card.className='prediction';
+    const heading=document.createElement('h3');heading.textContent=(index===0?'Possível resultado: ':'Outra possibilidade: ')+prediction.className;
+    const confidence=document.createElement('div');confidence.className='confidence';confidence.textContent='Pontuação do modelo: '+Math.round(prediction.probability*100)+'%';
+    const groupText=document.createElement('p');groupText.textContent='Grupo sugerido: '+(group||'não identificado com segurança');
+    card.append(heading,confidence,groupText);
+    if(matches.length){
+      const label=document.createElement('p');label.textContent='Fichas do catálogo para comparar (não são confirmação da espécie):';card.append(label);
+      const list=document.createElement('div');list.className='photo-suggestions';
+      matches.forEach(animal=>{const b=document.createElement('button');b.type='button';b.className='photo-suggestion';b.textContent=(icons[animal[1]]||'🐾')+' '+animal[0];b.addEventListener('click',()=>showAnimal(animal));list.appendChild(b);});
+      card.append(list);
+    }
+    photoResults.append(card);
+  });
+  const caveat=document.createElement('p');caveat.style.cssText='color:#9bb0c8;font-size:12px;line-height:1.55;margin:2px 0';caveat.textContent='A pontuação indica o quanto o modelo favorece aquele rótulo entre as classes que conhece. Não é a probabilidade de a identificação estar correta.';
+  photoResults.append(caveat);
+}
+function acceptPhoto(file){
+  if(!file)return;
+  if(!file.type.startsWith('image/')){setPhotoStatus('Escolha um arquivo de imagem.');return;}
+  if(file.size>15*1024*1024){setPhotoStatus('A imagem precisa ter menos de 15 MB.');return;}
+  selectedPhoto=file;
+  if(selectedPhotoUrl)URL.revokeObjectURL(selectedPhotoUrl);
+  selectedPhotoUrl=URL.createObjectURL(file);
+  photoPreview.src=selectedPhotoUrl;photoPreview.hidden=false;photoPlaceholder.hidden=true;
+  identifyPhotoBtn.disabled=false;clearPhotoBtn.disabled=false;
+  photoResults.innerHTML='';setPhotoStatus('Foto pronta. Toque em “Analisar foto” para receber sugestões.');
+}
+document.getElementById('cameraPickBtn').addEventListener('click',()=>cameraInput.click());
+document.getElementById('galleryPickBtn').addEventListener('click',()=>galleryInput.click());
+cameraInput.addEventListener('change',()=>acceptPhoto(cameraInput.files&&cameraInput.files[0]));
+galleryInput.addEventListener('change',()=>acceptPhoto(galleryInput.files&&galleryInput.files[0]));
+clearPhotoBtn.addEventListener('click',()=>{
+  selectedPhoto=null;cameraInput.value='';galleryInput.value='';photoPreview.removeAttribute('src');photoPreview.hidden=true;photoPlaceholder.hidden=false;
+  identifyPhotoBtn.disabled=true;clearPhotoBtn.disabled=true;photoResults.innerHTML='';setPhotoStatus('');
+  if(selectedPhotoUrl){URL.revokeObjectURL(selectedPhotoUrl);selectedPhotoUrl=null;}
+});
+identifyPhotoBtn.addEventListener('click',async()=>{
+  if(!selectedPhoto)return;
+  identifyPhotoBtn.disabled=true;setPhotoStatus('Carregando a inteligência artificial no navegador. Na primeira vez, pode levar um pouco...');photoResults.innerHTML='';
+  try{
+    const model=await getVisionModel();
+    setPhotoStatus('Analisando a foto...');
+    const predictions=await model.classify(photoPreview,5);
+    if(!predictions||!predictions.length){setPhotoStatus('Não consegui sugerir um animal nesta imagem. Tente uma foto mais nítida.');return;}
+    renderPhotoPredictions(predictions);setPhotoStatus('Análise concluída. Compare as sugestões com cuidado.');
+  }catch(err){setPhotoStatus(err&&err.message?err.message:'Ocorreu um erro ao analisar a imagem. Tente novamente.');}
+  finally{identifyPhotoBtn.disabled=!selectedPhoto;}
+});
+
+// Busca fotos de referência no Wikimedia Commons para os animais atualmente exibidos.
+const photoCache=new Map();
+async function commonsPhoto(name){
+  if(photoCache.has(name))return photoCache.get(name);
+  const task=(async()=>{
+    try{
+      const q=encodeURIComponent('filetype:bitmap '+name);
+      const url=`https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${q}&gsrnamespace=6&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=480&format=json&origin=*`;
+      const res=await fetch(url);if(!res.ok)return null;const data=await res.json();
+      const pages=Object.values(data.query?.pages||{});return pages[0]?.imageinfo?.[0]?.thumburl||pages[0]?.imageinfo?.[0]?.url||null;
+    }catch(_){return null;}
+  })();photoCache.set(name,task);return task;
+}
+let photoLoadToken=0;
+async function loadAnimalPhotos(){
+  const token=++photoLoadToken;
+  const imgs=[...grid.querySelectorAll('img[data-photo-name]')];
+  for(let i=0;i<imgs.length;i+=6){
+    if(token!==photoLoadToken)return;
+    await Promise.all(imgs.slice(i,i+6).map(async img=>{
+      const name=img.dataset.photoName;const animal=animals.find(a=>a[0]===name);
+      const url=await commonsPhoto(name+' '+(animal?.[2]||''));
+      if(url&&img.isConnected){img.src=url;img.onerror=()=>{img.style.display='none';};}
+      else if(img.isConnected)img.style.display='none';
+    }));
+  }
+}
+
+update();
+</script>
+</body>
+</html>
